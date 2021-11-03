@@ -1,64 +1,32 @@
 import React from "react";
-import {
-  Text,
-  Link,
-  HStack,
-  Center,
-  Heading,
-  Switch,
-  useColorMode,
-  NativeBaseProvider,
-  extendTheme,
-  VStack,
-  Code,
-} from "native-base";
+import { Input, Text, Center, NativeBaseProvider } from "native-base"
 import NativeBaseIcon from "./components/NativeBaseIcon";
+import { Provider } from "react-redux";
+import { Store } from "./redux/store";
+import { useSelector, useDispatch } from "react-redux";
+import { updateText } from "./redux/actions";
 
-// Define the config
-const config = {
-  useSystemColorMode: false,
-  initialColorMode: "dark",
-};
-
-// extend the theme
-export const theme = extendTheme({ config });
 
 export default function App() {
+
   return (
-    <NativeBaseProvider>
-      <Center _dark={{ bg: "blueGray.900" }} _light={{ bg: "blueGray.50" }} px={4} flex={1}>
-        <VStack space={5} alignItems="center">
-          <NativeBaseIcon />
-          <Heading size="lg">Welcome to NativeBase</Heading>
-          <HStack space={2} alignItems="center">
-            <Text>Edit</Text>
-            <Code>App.js</Code>
-            <Text>and save to reload.</Text>
-          </HStack>
-          <Link href="https://docs.nativebase.io" isExternal>
-            <Text color="primary.500" underline fontSize={"xl"}>
-              Learn NativeBase
-            </Text>
-          </Link>
-          <ToggleDarkMode />
-        </VStack>
-      </Center>
-    </NativeBaseProvider>
+    <Provider store={Store}>
+      <AppWrapper></AppWrapper>
+    </Provider>
   );
 }
 
-// Color Switch Component
-function ToggleDarkMode() {
-  const { colorMode, toggleColorMode } = useColorMode();
+function AppWrapper() {
+
+  const {text} = useSelector(state => state.userReducer);
+  const dispatch = useDispatch();
+
   return (
-    <HStack space={2} alignItems="center">
-      <Text>Dark</Text>
-      <Switch
-        isChecked={colorMode === "light" ? true : false}
-        onToggle={toggleColorMode}
-        aria-label={colorMode === "light" ? "switch to dark mode" : "switch to light mode"}
-      />
-      <Text>Light</Text>
-    </HStack>
-  );
+          <NativeBaseProvider>
+            <Center _dark={{ bg: "blueGray.900" }} _light={{ bg: "blueGray.50" }} px={4} flex={1}>
+              <Input mx="3" placeholder="Input to use Redux" w={{ base: "75%",md: "25%"}} variant="rounded" onChangeText = {(value) => dispatch(updateText(value))}></Input>
+              <Text>{text}</Text>
+            </Center>
+          </NativeBaseProvider>)
 }
+
